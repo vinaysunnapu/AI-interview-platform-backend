@@ -34,11 +34,13 @@ The API runs at `http://127.0.0.1:8000`. Interactive API documentation is availa
 
 ## API
 
-- `POST /interview/generate_question`: multipart form fields `job_title`, `job_description`, and `resume` (PDF only, up to 5 MB); returns a `session_id`.
-- `GET /interview/start/{session_id}`: returns the introduction and first question.
-- `POST /interview/submit`: JSON body with `session_id`, `answer`, and `skip`; records an answer and returns the next question or indicates the interview ended.
-- `PUT /interview/end/{session_id}`: ends an interview session.
-- `GET /interview/report/{session_id}`: generates a report from the session's answers.
+- `POST /interview/generate_question`: multipart form fields `job_title`, `job_description`, and `resume` (PDF only, up to 5 MB); prepares an interview session and returns a `session_id`.
+- `GET /interview/start/{session_id}`: starts the 10-minute timer and returns the introduction, first question, and remaining time.
+- `POST /interview/submit`: JSON body with `session_id`, `answer`, and `skip`; evaluates the answer and returns a contextual follow-up or a new topic. At timeout, the response includes the final report.
+- `PUT /interview/end/{session_id}`: ends the interview early and returns the final report.
+- `GET /interview/report/{session_id}`: returns the cached final report, or generates one from all answers if needed.
+
+Questions after the opening question are generated dynamically from the candidate's answers. The interview moves between follow-ups and new topics until the 10-minute timer expires or the candidate ends it.
 
 ## Notes
 
